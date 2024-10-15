@@ -19,8 +19,9 @@ const swaggerOptions = {
     swaggerDefinition: {
         openapi: '3.0.0',
         info: {
-            title: 'CV API',
+            title: 'CV API Documentation',
             version: '1.0.0',
+            description: 'API pour gérer les CVs',
         },
     },
     apis: ['./routes/*.js'], // Spécifie où Swagger doit trouver les définitions

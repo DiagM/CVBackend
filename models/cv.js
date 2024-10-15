@@ -17,10 +17,10 @@ const educationSchema = new mongoose.Schema({
     endDate: { type: Date },                      // Date de fin (facultative)
 }, { _id: false }); // Éviter un _id pour chaque formation
 
-const recommendationSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // L'utilisateur qui laisse la recommandation
-    comment: { type: String, required: true },                                     // Commentaire laissé
-}, { timestamps: true });
+// const recommendationSchema = new mongoose.Schema({
+//     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // L'utilisateur qui laisse la recommandation
+//     comment: { type: String, required: true },                                     // Commentaire laissé
+// }, { timestamps: true });
 
 const cvSchema = new mongoose.Schema({
     name: { type: String, required: true },           // Prénom de l'utilisateur
@@ -31,7 +31,7 @@ const cvSchema = new mongoose.Schema({
     experiences: [experienceSchema],                  // Tableau d'expériences professionnelles
     education: [educationSchema],                     // Tableau de formations
     skills: [{ type: String }],                       // Tableau des compétences
-    recommendations: [recommendationSchema],          // Tableau de recommandations
+    // recommendations: [recommendationSchema],          // Tableau de recommandations
     visible: { type: Boolean, default: true },        // Indicateur si le CV est visible ou non
 }, { timestamps: true });
 

@@ -1,31 +1,114 @@
-const express = require('express');
-const User = require('./models/User'); // Adjust the path according to your project structure
-const router = express.Router();
-const bcrypt = require('bcrypt'); // Ensure you have bcrypt installed for password hashing
+const router = require('express').Router();
+const autController = require('./../controllers/auth');
 
-// Authentification user
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Crée un nouvel utilisateur
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstname:
+ *                 type: string
+ *                 example: "John"
+ *               lastname:
+ *                 type: string
+ *                 example: "Doe"
+ *               email:
+ *                 type: string
+ *                 example: "johndoe@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "password123"
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "650a2b63f4972a001d9e66e7"
+ *                 lastname:
+ *                   type: string
+ *                   example: "Doe"
+ *                 firstname:
+ *                   type: string
+ *                   example: "John"
+ *                 email:
+ *                   type: string
+ *                   example: "johndoe@example.com"
+ *       400:
+ *         description: Erreur de validation ou autre erreur
+ */
+router.post('/register', autController.register);
 
-    try {
-        // Find user by email
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Check password
-        const isMatch = await bcrypt.compare(password, user.password); // Adjust this if you're using a different method to compare passwords
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
-
-        // Generate and send token or user data as needed
-        res.status(200).json({ message: 'Login successful', userId: user._id }); // Adjust as necessary
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Authentification utilisateur
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "johndoe@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "password123"
+ *     responses:
+ *       200:
+ *         description: Connexion réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Login successfully"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "650a2b63f4972a001d9e66e7"
+ *                     firstname:
+ *                       type: string
+ *                       example: "John"
+ *                     lastname:
+ *                       type: string
+ *                       example: "Doe"
+ *                     token:
+ *                       type: string
+ *                       example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTBhMmI2M2Y0OTcyYTAwMWQ5ZTY2ZTciLCJpYXQiOjE2MTUxODc3MjAsImV4cCI6MTYxNTE5MTMyMH0.-uC9Is8QY9o1EuXp39YzSPE9hT9TbzIAVV6dWZxlx2I"
+ *       401:
+ *         description: Informations de connexion incorrectes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Wrong login informations"
+ */
+router.post('/login', autController.login);
 
 module.exports = router;
