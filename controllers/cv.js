@@ -38,7 +38,7 @@ const getCV = async (req, res) => {
 // Get all CVs
 const getAllCVs = async (req, res) => {
     try {
-        const cvs = await CVModel.find();
+        const cvs = await CVModel.find({ visible: true }); // Only fetch CVs that are visible
         res.json(cvs);
     } catch (error) {
         res.status(500).json({ error: error.message });

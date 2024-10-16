@@ -173,7 +173,7 @@ router.get('/:cvId', async (req, res) => {
  */
 router.get('/', async (req, res) => {
     try {
-        const cvs = await CV.find();
+        const cvs = await CV.find({ visible: true });
         res.json(cvs);
     } catch (error) {
         res.status(500).json({ error: error.message });
