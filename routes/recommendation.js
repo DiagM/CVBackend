@@ -54,15 +54,22 @@ const router = express.Router();
  *       500:
  *         description: Erreur du serveur
  */
+// POST /api/recommendation
 router.post('/', async (req, res) => {
     const { cvId, userId, comment } = req.body;
+
+    // Validate input data
+    if (!cvId || !userId || !comment) {
+        return res.status(400).json({ error: 'cvId, userId, and comment are required.' });
+    }
 
     try {
         const recommendation = new Recommendation({ cvId, userId, comment });
         await recommendation.save();
         res.status(201).json(recommendation);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error saving recommendation:', error);
+        res.status(500).json({ error: 'An error occurred while saving the recommendation.' });
     }
 });
 
@@ -94,9 +101,22 @@ router.post('/', async (req, res) => {
 router.get('/:cvId', async (req, res) => {
     const { cvId } = req.params;
 
+
     try {
-        const recommendations = await Recommendation.find({ cvId }).populate('userId', 'name surname');
-        res.json(recommendations);
+        const recommendations = await Recommendation.find({ cvId })
+            .populate('cvId') // Populate CV details if necessary
+            .populate('userId', 'firstname lastname'); // Populate userId with only name and surname
+
+        // Optionally, you can format the recommendations if needed
+        const formattedRecommendations = recommendations.map(rec => ({
+            comment: rec.comment,
+            userId: rec.userId._id,
+            firstname: rec.userId.firstname,
+            lastname: rec.userId.lastname,
+            cvId: rec.cvId, // Include CV details if necessary
+        }));
+
+        res.json(formattedRecommendations); // Send the formatted recommendations
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -122,7 +142,7 @@ router.get('/:cvId', async (req, res) => {
  */
 router.get('/', async (req, res) => {
     try {
-        const recommendations = await Recommendation.find().populate('cvId').populate('userId', 'name surname');
+        const recommendations = await Recommendation.find().populate('cvId').populate('userId', 'firstname');
         res.json(recommendations);
     } catch (error) {
         res.status(500).json({ error: error.message });

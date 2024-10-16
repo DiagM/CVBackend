@@ -23,6 +23,7 @@ const educationSchema = new mongoose.Schema({
 // }, { timestamps: true });
 
 const cvSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true },           // Prénom de l'utilisateur
     surname: { type: String, required: true },        // Nom de l'utilisateur
     email: { type: String, required: true },          // Email de l'utilisateur

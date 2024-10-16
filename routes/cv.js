@@ -1,6 +1,7 @@
 const express = require('express');
 const CV = require('../models/cv');
 const router = express.Router();
+const authenticateToken = require('../middlewares/jwt');
 
 /**
  * @swagger
@@ -68,7 +69,7 @@ const router = express.Router();
  *       500:
  *         description: Erreur du serveur
  */
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     try {
         const newCV = new CV(req.body);
         await newCV.save();
@@ -105,7 +106,7 @@ router.post('/', async (req, res) => {
  *       500:
  *         description: Erreur serveur
  */
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const updatedCV = await CV.findByIdAndUpdate(id, req.body, { new: true });
@@ -141,10 +142,10 @@ router.put('/:id', async (req, res) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:id', async (req, res) => {
+router.get('/:cvId', async (req, res) => {
     try {
-        const { id } = req.params;
-        const cv = await CV.findById(id);
+        const { cvId } = req.params;
+        const cv = await CV.findById(cvId);
         if (!cv) return res.status(404).json({ message: 'CV not found' });
         res.json(cv);
     } catch (error) {
@@ -200,7 +201,7 @@ router.get('/', async (req, res) => {
  *       500:
  *         description: Erreur serveur
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const cv = await CV.findByIdAndDelete(id);
