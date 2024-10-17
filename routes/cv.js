@@ -212,4 +212,20 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/user/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;  // Extract userId from the URL params
+
+        // Ensure userId is a valid ObjectId before querying
+        const cvs = await CV.find({ userId: userId });
+        res.json(cvs);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+
+
 module.exports = router;
