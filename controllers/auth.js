@@ -67,6 +67,7 @@ module.exports = {
                     id: user.id,
                     firstname: user.firstname,
                     lastname: user.lastname,
+                    email: user.email,
                     token
                 }
             });

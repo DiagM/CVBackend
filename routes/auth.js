@@ -1,5 +1,7 @@
 const router = require('express').Router();
-const autController = require('./../controllers/auth');
+const autController = require('../controllers/auth');
+const authenticateToken = require('../middlewares/jwt');
+const { editProfile } = require('../controllers/profile');
 
 /**
  * @swagger
@@ -110,5 +112,79 @@ router.post('/register', autController.register);
  *                   example: "Wrong login informations"
  */
 router.post('/login', autController.login);
+
+/**
+ * @swagger
+ * /profile/edit:
+ *   put:
+ *     summary: Modifie le profil utilisateur
+ *     tags:
+ *       - Profile
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "John"
+ *               firstName:
+ *                 type: string
+ *                 example: "Doe"
+ *               email:
+ *                 type: string
+ *                 example: "johndoe@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "newPassword123"
+ *     responses:
+ *       200:
+ *         description: Profil mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Profile updated successfully"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       example: "John"
+ *                     firstName:
+ *                       type: string
+ *                       example: "Doe"
+ *                     email:
+ *                       type: string
+ *                       example: "johndoe@example.com"
+ *       404:
+ *         description: Utilisateur non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Erreur du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Server error"
+ */
+router.put('/profile/edit', authenticateToken, editProfile);
 
 module.exports = router;
